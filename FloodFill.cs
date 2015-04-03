@@ -5,15 +5,38 @@ using System.Text;
 
 public static class FloodFill
 {
+    public static bool[,] Fill(bool[,] map, Vector2 size, Vector2 position, bool state)
+    {
+        if (!map[(int)position.x, (int)position.y] == state)
+        {
+            return FillRecursive(map, size, position, state);
+        }
+        return map;
+    }
+
     public static bool[,] Fill(bool[,] map, Vector2 size, Vector2 position)
     {
-        if (!map[(int)position.x, (int)position.y]) 
+        if (!map[(int)position.x, (int)position.y])
         {
             return FillRecursive(map, size, position);
         }
         return map;
     }
-    private static bool[,] FillRecursive(bool[,] map, Vector2 size, Vector2 position) 
+
+
+    private static bool[,] FillRecursive(bool[,] map, Vector2 size, Vector2 position, bool state)
+    {
+        if (map[(int)position.x, (int)position.y] == state)
+            return map;
+        map[(int)position.x, (int)position.y] = state;
+        foreach (var canidate in Neighbors(position, size))
+        {
+            map = FillRecursive(map, size, canidate, state);
+        }
+        return map;
+    }
+
+    private static bool[,] FillRecursive(bool[,] map, Vector2 size, Vector2 position)
     {
         if (map[(int)position.x, (int)position.y])
             return map;
@@ -23,8 +46,8 @@ public static class FloodFill
             map = FillRecursive(map, size, canidate);
         }
         return map;
-
     }
+
     public static int GetSizeOfBlock(bool[,] map, Vector2 size, Vector2 position)
     {
         List<Vector2> openList = new List<Vector2>();
@@ -86,8 +109,8 @@ public static class FloodFill
 
 public struct Vector2
 {
-    internal float x, y;
-    internal Vector2(float x, float y)
+    public float x, y;
+    public Vector2(float x, float y)
     {
         this.x = x;
         this.y = y;
